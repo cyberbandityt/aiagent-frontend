@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { PlusCircle, Loader2, LogOut, User } from "lucide-react"
+import { PlusCircle, Loader2, LogOut, User, AlertCircle } from "lucide-react"
 import { TopicCard } from "@/components/topic-card"
 import { topicsApi } from "@/lib/api"
 import { useAuth } from "@/contexts/auth-context"
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 interface Topic {
   _id: string
@@ -30,6 +31,8 @@ interface TopicWithStats extends Topic {
   lastUpdated: string
   sentiment: { positive: number; neutral: number; negative: number }
 }
+
+const MAX_TOPICS = 10
 
 export default function Dashboard() {
   const { user, loading: authLoading, logout } = useAuth()
@@ -90,9 +93,35 @@ export default function Dashboard() {
     )
   }
 
+  const isTopicLimitReached = topics.length >= MAX_TOPICS
 
   return (
     <div className="container mx-auto py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold mb-1">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Topics: {topics.length} / {MAX_TOPICS}
+          </p>
+        </div>
+        <Link href="/topics/new">
+          <Button disabled={isTopicLimitReached}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Create Topic
+          </Button>
+        </Link>
+      </div>
+
+      {isTopicLimitReached && (
+        <Alert className="mb-6">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Topic limit reached</AlertTitle>
+          <AlertDescription>
+            You've reached the maximum limit of {MAX_TOPICS} topics. Please delete an existing topic before creating a new one.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <Loader2 className="h-8 w-8 animate-spin" />
