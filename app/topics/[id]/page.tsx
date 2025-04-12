@@ -128,7 +128,8 @@ export default function TopicPage({ params }: TopicPageProps) {
   return (
     <div className="container mx-auto py-8">
       <div className="flex flex-col space-y-6">
-        <div className="flex justify-between items-center">
+        {/* Top section with back button, title and badge - similar on all screen sizes */}
+        <div className="flex flex-col space-y-2">
           <div className="flex items-center">
             <Link href="/">
               <Button variant="ghost" size="icon" className="mr-2">
@@ -140,7 +141,39 @@ export default function TopicPage({ params }: TopicPageProps) {
               {isActive ? "Active" : "Paused"}
             </Badge>
           </div>
-          <div className="flex gap-2">
+          
+          {/* Mobile-only action buttons that appear below the title */}
+          <div className="flex flex-col sm:hidden space-y-2 mt-2">
+            <Button
+              variant="outline"
+              onClick={triggerManualScrape}
+              disabled={isUpdating || !isActive}
+              className="text-blue-500 w-full"
+            >
+              {isUpdating ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Newspaper className="mr-2 h-4 w-4" />
+              )}
+              Scrape Now
+            </Button>
+            <Button
+              variant="outline"
+              onClick={toggleTopicStatus}
+              disabled={isUpdating}
+              className={`w-full ${isActive ? "text-red-500" : "text-green-500"}`}
+            >
+              {isUpdating ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Power className="mr-2 h-4 w-4" />
+              )}
+              {isActive ? "Stop Monitoring" : "Resume Monitoring"}
+            </Button>
+          </div>
+          
+          {/* Desktop-only action buttons that appear to the right */}
+          <div className="hidden sm:flex gap-2 justify-end -mt-8">
             <Button
               variant="outline"
               onClick={triggerManualScrape}
@@ -249,7 +282,7 @@ export default function TopicPage({ params }: TopicPageProps) {
             </CardContent>
           </Card>
 
-          {/* New Navigation Card */}
+          {/* Navigation Card */}
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center">
@@ -291,7 +324,6 @@ export default function TopicPage({ params }: TopicPageProps) {
               <BarChart2 className="mr-2 h-4 w-4" />
               Analytics
             </TabsTrigger>
-            
           </TabsList>
 
           <TabsContent value="chat" className="mt-6">
@@ -316,8 +348,6 @@ export default function TopicPage({ params }: TopicPageProps) {
               </CardContent>
             </Card>
           </TabsContent>
-
-         
         </Tabs>
       </div>
     </div>
