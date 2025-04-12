@@ -24,7 +24,7 @@ interface Article {
     url: string
   }
   publishedAt: string
-  summary: string
+  content: string
   sentiment: {
     score: number
     magnitude: number
@@ -181,7 +181,7 @@ export function ArticleList({ topicId }: ArticleListProps) {
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">{article.summary || article.description}</p>
+              <p className="text-sm text-muted-foreground">{article.description || article.content}</p>
             </CardContent>
             <CardFooter>
               <Button variant="outline" size="sm" className="ml-auto" asChild>
